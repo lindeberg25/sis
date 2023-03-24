@@ -5,7 +5,7 @@ USER root
 WORKDIR /deployment
 
 
-RUN mkdir cache && touch .cache \
+RUN mkdir cache && mkdir audios && mkdir inicio_fim_transcricoes && mkdir transcricoes && touch .cache \
     && chmod -R 777 /deployment/
 
 
