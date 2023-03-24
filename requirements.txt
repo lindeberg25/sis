@@ -1,0 +1,7 @@
+torch
+ffmpeg-python
+librosa
+#whisper
+librosa
+pika
+transformers>=4.19.0
