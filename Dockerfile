@@ -6,7 +6,7 @@ WORKDIR /deployment
 
 
 RUN mkdir cache && mkdir audios && mkdir inicio_fim_transcricoes && mkdir transcricoes && touch .cache \
-    && chmod -R 777 /deployment/
+    && chmod 777 /deployment/
 
 
 ENV NUMBA_CACHE_DIR=/tmp/
@@ -19,7 +19,7 @@ ENV NUMBA_CACHE_DIR=/tmp/
 
 
 
-#RUN chmod 755 /deployment/
+#RUN chmod 777 /deployment/
 #RUN chmod 755 /deployment/cache/
 #RUN chmod 755 /deployment/audio/
 

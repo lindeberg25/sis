@@ -7,30 +7,48 @@ import torch
 import logging
 import librosa
 
-def main():
+
+# url de acesso a fila
+url_fila = 'localhost'
+
+# porta fila
+port = 5672
+
+# usuário da fila
+user_queue = "guest"
+
+# password da fila 
+password_queue = "guest"
+
+# Declare an existing queue
+queue_name = 'sis_eventos'
+
+# pasta onde se encontra os áudios do SIS
+pasta_audios = "audios"
     
-    logging.basicConfig(filename='stt_amp.log', level=logging.INFO)
+# pasta onde as transcrições são salvas
+pasta_transcricoes = "transcricoes"
+
+# pasta para controle das transcrições que já inciaram 
+pasta_inicio_fim_transcricoes = "inicio_fim_transcricoes"
+
+# arquivo de log
+arquivo_log = "fala_texto.log"
+
+def main(url_fila, port,  user_queue, password_queue, queue_name, pasta_audios, pasta_transcricoes, pasta_inicio_fim_transcricoes, arquivo_log):
+    
+    logging.basicConfig(filename=arquivo_log, level=logging.INFO)
 
     
     # Definindo as credenciais de conexão com o RabbitMQ
-    credentials = pika.PlainCredentials('guest', 'guest')
-    parameters = pika.ConnectionParameters('localhost', 5672, '/', credentials)
+    credentials = pika.PlainCredentials(user_queue, password_queue)
+    parameters = pika.ConnectionParameters(url_fila, port, '/', credentials)
 
     # Criando a conexão com o RabbitMQ
     connection = pika.BlockingConnection(parameters)
     channel = connection.channel()
 
-    # Declare an existing queue
-    queue_name = 'sis_eventos'
-
-    # pasta onde se encontra os áudios do SIS
-    pasta_audios = "audios"
     
-    # pasta onde as transcrições são salvas
-    pasta_transcricoes = "transcricoes"
-
-    # pasta onde as transcrições são salvas
-    pasta_inicio_fim_transcricoes = "inicio_fim_transcricoes"
 
     # Definindo a função que será executada ao receber uma mensagem
     def callback(ch, method, properties, body):
@@ -67,9 +85,6 @@ def main():
             with open(filename_fim_transcricoes, "w") :
                 #f.write(result['text'])
                 logging.info("Fim de Transcrição {}".format(mensagem['conteudo']))
-            
-            
-            
       
             logging.info("Duração do áudio %s seconds " % duration)
             logging.info("Tempo de transcrição %s seconds " % (time.time() - start))
@@ -97,10 +112,18 @@ def chech_audios_not_processed(pasta_inicio_fim_transcricoes):
     prefixo_fim = 'fim_'
 
     for file in os.listdir(dir_path):
+        
+        # Checa se existe um arquivo começando com o prefix 'inicio_' e não existe o prefix 'fim_' correspondente. 
+        # Caso não exista o prefix 'fim_' e já tenha passado 24h, o prefixo inicio é deletado, porque ocorreu algum erro no processamento
+        # Esse procedimento, permite que o próximo pod que subir reprocesso o arquivo novamente, pois não haverá a transcrição dele na pasta
+        # transcrições e não há início de processamento por qualquer outro pod
         if file.startswith(prefixo_inicio) and not os.path.exists(os.path.join(dir_path, prefixo_fim + file[len(prefixo_inicio):-4] + '.WAV')):
             inicio_file_path = os.path.join(dir_path, file)
             if (time.time() - os.path.getctime(inicio_file_path)) // (24 * 3600) > 0:
                 os.remove(inicio_file_path)
+        
+        # Caso já existe os arquivos com seus 'inicio_' e 'fim_' corresponndentes, estes já podem ser apagadas para esvaziar a pasta pasta_inicio_fim_transcricoes
+        # e permite checagem mais rápidas pelos pods
         elif file.startswith(prefixo_inicio) and os.path.exists(os.path.join(dir_path, prefixo_fim + file[len(prefixo_inicio):-4] + '.WAV')):
             inicio_file_path = os.path.join(dir_path, file)
             fim_file_path = os.path.join(dir_path, prefixo_fim + file[len(prefixo_inicio):-4] + '.WAV')
@@ -111,4 +134,4 @@ def chech_audios_not_processed(pasta_inicio_fim_transcricoes):
 
 if __name__ == '__main__':
     
-    main()
+    main(url_fila, port,  user_queue, password_queue, queue_name, pasta_audios, pasta_transcricoes, pasta_inicio_fim_transcricoes, arquivo_log)
