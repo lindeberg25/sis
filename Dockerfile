@@ -5,9 +5,15 @@ USER root
 WORKDIR /deployment
 
 
-RUN mkdir cache && mkdir audios && mkdir inicio_fim_transcricoes && mkdir transcricoes && touch .cache \
-    && chmod 777 /deployment/
+RUN mkdir cache && mkdir audios && mkdir inicio_fim_transcricoes && mkdir transcricoes && mkdir audios_sis && mkdir inicio_fim_transcricoes && touch .cache \
+    && chmod 777 /deployment/ && chmod 777 /deployment/audios && chmod 777 /deployment/inicio_fim_transcricoes
 
+
+VOLUME --name audios /audios
+
+VOLUME --name transcricoes /transcricoes
+
+VOLUME --name inicio_fim_transcricoes /inicio_fim_transcricoes
 
 ENV NUMBA_CACHE_DIR=/tmp/
 

@@ -24,18 +24,18 @@ password_queue = "guest"
 queue_name = 'sis_eventos'
 
 # pasta onde se encontra os áudios do SIS
-pasta_audios = "audios"
+audios = "audios"
     
 # pasta onde as transcrições são salvas
-pasta_transcricoes = "transcricoes"
+transcricoes = "transcricoes"
 
 # pasta para controle das transcrições que já inciaram 
-pasta_inicio_fim_transcricoes = "inicio_fim_transcricoes"
+inicio_fim_transcricoes = "inicio_fim_transcricoes"
 
 # arquivo de log
 arquivo_log = "fala_texto.log"
 
-def main(url_fila, port,  user_queue, password_queue, queue_name, pasta_audios, pasta_transcricoes, pasta_inicio_fim_transcricoes, arquivo_log):
+def main(url_fila, port,  user_queue, password_queue, queue_name, audios, transcricoes, inicio_fim_transcricoes, arquivo_log):
     
     logging.basicConfig(filename=arquivo_log, level=logging.INFO)
 
@@ -134,4 +134,4 @@ def chech_audios_not_processed(pasta_inicio_fim_transcricoes):
 
 if __name__ == '__main__':
     
-    main(url_fila, port,  user_queue, password_queue, queue_name, pasta_audios, pasta_transcricoes, pasta_inicio_fim_transcricoes, arquivo_log)
+    main(url_fila, port,  user_queue, password_queue, queue_name, audios, transcricoes, inicio_fim_transcricoes, arquivo_log)
