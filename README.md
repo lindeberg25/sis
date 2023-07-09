@@ -10,7 +10,7 @@ This project provides a script designed for law enforcement agencies to perform 
 To run this project, you need to create a Conda environment using the provided `stt_environment.yaml` file. This environment contains all the necessary dependencies for the script to function properly.
 ```
 conda env create -f stt_environment.yaml
-conda activate stt_environment
+conda activate stt
 ```
 
 ## Usage
