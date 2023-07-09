@@ -18,7 +18,7 @@ conda activate stt_environment
 ## Usage
 To use the script, run the following command:
 
-```shell
+
 python script.py <audio_file>
 
 Replace <audio_file> with the path to the audio file you want to process.
