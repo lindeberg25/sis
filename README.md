@@ -1,6 +1,5 @@
 # Transcribe and Diarize Audio Files
 
-![Project Logo](/path/to/logo.png)
 
 ## Overview
 
@@ -23,7 +22,7 @@ python script.py <audio_file>
 
 Replace <audio_file> with the path to the audio file you want to process.
 
-## Configuration
+Configuration
 The script uses environment variables for configuration. Create a .env file and set the following variables:
 
 batch_audios_for_processing: Number of recordings the script processes at once.
@@ -32,7 +31,7 @@ transcription_model: Path to the transcription model.
 log_file: Path to the log file.
 language (optional): Language for the transcription model.
 
-## Script Details
+Script Details
 The script performs the following steps:
 
 Loads the environment variables and sets up logging.
@@ -43,11 +42,10 @@ Parses command-line arguments and calls the transcribe_diarization function with
 Examples
 Transcribe and diarize an audio file:
 
-```shell
 python script.py path/to/audio_file.wav
 
-## Contributing
+ Contributing
 Contributions are welcome! If you encounter any issues or have suggestions for improvements, please create a new issue or submit a pull request.
 
-## License
+ License
 This project is licensed under the MIT License. See LICENSE for more details.
