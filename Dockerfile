@@ -1,52 +1,62 @@
-FROM python:3.10-slim
+# Use a imagem oficial do Red Hat como base
+FROM registry.access.redhat.com/ubi8/ubi
 
-USER root
+# Copie o arquivo environment.yaml para o diretório atual
+COPY stt_environment.yaml .
 
-WORKDIR /deployment
+# Instale o ambiente Conda a partir do arquivo YAML
+RUN curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -o miniconda.sh \
+    && sh miniconda.sh -b -p /opt/conda \
+    && rm miniconda.sh \
+    && /opt/conda/bin/conda env create -f stt_environment.yaml \
+    && /opt/conda/bin/conda clean -afy \
+    && dnf install -y libsndfile
+
+# Configure o ambiente Conda como padrão
+ENV PATH /opt/conda/envs/stt/bin:$PATH
 
 
-RUN mkdir cache && mkdir audios && mkdir inicio_fim_transcricoes && mkdir transcricoes && mkdir audios_sis && touch .cache \
-    && chmod 777 /deployment/ && chmod 777 /deployment/audios && chmod 777 /deployment/inicio_fim_transcricoes
+# Instala as dependências necessárias
+RUN dnf install -y libaio && \
+    dnf clean all && \
+    rm -rf /var/cache/dnf
 
+# Baixa o pacote RPM do Oracle Instant Client e instala-o
+ADD https://download.oracle.com/otn_software/linux/instantclient/211000/oracle-instantclient-basic-21.1.0.0.0-1.x86_64.rpm /tmp/
+ADD https://download.oracle.com/otn_software/linux/instantclient/211000/oracle-instantclient-devel-21.1.0.0.0-1.x86_64.rpm /tmp/
+RUN dnf install -y /tmp/oracle-instantclient-basic-21.1.0.0.0-1.x86_64.rpm /tmp/oracle-instantclient-devel-21.1.0.0.0-1.x86_64.rpm && \
+    rm -f /tmp/oracle-instantclient-basic-21.1.0.0.0-1.x86_64.rpm /tmp/oracle-instantclient-devel-21.1.0.0.0-1.x86_64.rpm && \
+    dnf clean all && \
+    rm -rf /var/cache/dnf
 
-VOLUME --name audios /audios
+# Define a variável de ambiente LD_LIBRARY_PATH para incluir o caminho do Instant Client
+ENV LD_LIBRARY_PATH="/usr/lib/oracle/21/client64/lib"
 
-VOLUME --name transcricoes /transcricoes
-
-VOLUME --name inicio_fim_transcricoes /inicio_fim_transcricoes
 
 ENV NUMBA_CACHE_DIR=/tmp/
 
-#RUN touch .cache
-#RUN chmod 755 .cache
+# Crie um diretório de trabalho
+#WORKDIR /app
 
+RUN mkdir /app && mkdir -p /app/gravacoes
 
-#RUN chmod 755 /deployment/.cache
+RUN mkdir -p /.cache && chmod -R 777 /.cache
+RUN mkdir -p /.config/ && chmod -R 777 /.config
+RUN mkdir -p /speaker-diarization && chmod -R 777 /speaker-diarization
+RUN mkdir -p /pyannote-audio && chmod -R 777 /pyannote-audio
+#RUN  mkdir -p /.cache/torch/pyannote/models--pyannote--speaker-diarization/refs/main && chmod -R 777 /.cache/torch/pyannote/models--pyannote--speaker-diarization/refs/main
 
+RUN chmod -R 777 /app/
+RUN chmod -R 777 /app/gravacoes
+#RUN pip install -qq https://github.com/pyannote/pyannote-audio/archive/develop.zip
+#RUN pip install Lightning
+# Copie a aplicação sis_stt.py para o diretório /app
+COPY medium.pt /app
+COPY sis_stt.py /app
+COPY pyannote_whisper/ /app/pyannote_whisper
+COPY speaker-diarization/ /speaker-diarization
+COPY pyannote-audio/ /pyannote-audio
 
-
-#RUN chmod 777 /deployment/
-#RUN chmod 755 /deployment/cache/
-#RUN chmod 755 /deployment/audio/
-
-
-
-RUN apt-get -qq update \
-    && apt-get -qq install --no-install-recommends ffmpeg
-
-COPY requirements.txt requirements.txt
-RUN  apt-get -y install git
-
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
-RUN pip install "git+https://github.com/openai/whisper.git" 
-ADD https://openaipublic.azureedge.net/main/whisper/models/345ae4da62f9b3d59415adc60127b97c714f32e89e936602e85993674d08dcb1/medium.pt /deployment
-
-RUN chmod 777 /deployment/medium.pt
-
-COPY . .
-
-
-USER 1001
-
-CMD ["python","stt-amq.py"]
+RUN pip install pyannote-audio --quiet
+# Execute a aplicação quando o container for iniciado
+CMD ["python", "/app/sis_stt.py"]
