@@ -3,7 +3,7 @@
 
 ## Overview
 
-This project provides a script that performs transcription and diarization on audio files. It utilizes various libraries and models to transcribe speech and identify speakers in the audio.
+This project provides a script designed for law enforcement agencies to perform transcription and diarization on audio files. The script utilizes the whiper models to transcribe speech and pyannote-audio lib ot identify speakers within the audio recordings.
 
 ## Installation
 
