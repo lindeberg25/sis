@@ -15,7 +15,7 @@ conda env create -f stt_environment.yaml
 conda activate stt_environment
 
 
-## Usage
+Usage
 To use the script, run the following command:
 
 
