@@ -72,6 +72,7 @@ def transcribe_diarization(audio_file):
         for seg, spk, sent in final_result:
             line = f'({seg.start:.1f}s - {seg.end:.1f}s) {spk}: {sent}'
             transcricao += line + os.linesep
+        print(transcricao)
 
 def main():
     parser = argparse.ArgumentParser(description='Transcribe and diarize audio files.')
