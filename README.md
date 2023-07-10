@@ -13,7 +13,7 @@ git clone https://github.com/lindeberg25/sis.git
 cd sis/
 conda env create -f stt_environment.yaml
 conda activate stt
-(stt) pip install pyannote-audio/
+(stt) pip install pyannote-audio/  (use this local repository as the original has been changed to run offline)
 ```
 
 ## Usage
@@ -47,6 +47,15 @@ Transcribe and diarize an audio file:
 ```
 (stt) python sis_stt.py path/to/audio_file.wav
 ```
-
+##### Expected output example
+```
+(0.0s - 1.0s)   HNI_1:  Oi, pai.
+(1.0s - 7.0s)   HNI_2:  Oi, tô chegando.
+(7.0s - 12.0s)  HNI_1:  Já estou aqui esperando.
+(12.0s - 15.0s) HNI_2:  Tá bom.
+(16.0s - 19.0s) HNI_1:  Quando chegar, avisa.
+(29.0s - 30.0s) HNI_2:  Tá bom.
+```
+HNI = Human not identified 
 ## License
 This project is licensed under the MIT License.
