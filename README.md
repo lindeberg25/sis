@@ -9,15 +9,18 @@ This project provides a script designed for law enforcement agencies to perform 
 
 To run this project, you need to create a Conda environment using the provided `stt_environment.yaml` file. This environment contains all the necessary dependencies for the script to function properly.
 ```
+git clone https://github.com/lindeberg25/sis.git
+cd sis/
 conda env create -f stt_environment.yaml
 conda activate stt
+(stt) pip install pyannote-audio/
 ```
 
 ## Usage
 To use the script, run the following command:
 
 ```
-python script.py <audio_file>
+(stt) python sis_stt.py <audio_file>
 ```
 Replace <audio_file> with the path to the audio file you want to process.
 
@@ -42,7 +45,7 @@ The script performs the following steps:
 ## Examples
 Transcribe and diarize an audio file:
 ```
-python script.py path/to/audio_file.wav
+(stt) python sis_stt.py path/to/audio_file.wav
 ```
 
 ## License
