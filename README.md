@@ -13,7 +13,7 @@ git clone https://github.com/lindeberg25/sis.git
 cd sis/
 conda env create -f stt_environment.yaml
 conda activate stt
-(stt) pip install pyannote-audio/  (use this local repository as the original has been changed to run offline)
+(stt) pip install pyannote-audio/  (use this local repository to run offline)
 ```
 
 ## Usage
